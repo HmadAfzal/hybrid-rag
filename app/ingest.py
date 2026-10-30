@@ -1,3 +1,4 @@
+import os
 import sys, uuid
 from pathlib import Path
 from pypdf import PdfReader
@@ -5,7 +6,11 @@ from fastembed import TextEmbedding, SparseTextEmbedding
 from qdrant_client import QdrantClient, models
 
 COLLECTION = "docs"
-client = QdrantClient("localhost", port=6333)
+client = (
+    QdrantClient(url=os.environ["QDRANT_URL"], api_key=os.getenv("QDRANT_API_KEY"))
+    if os.getenv("QDRANT_URL")
+    else QdrantClient(os.getenv("QDRANT_HOST", "localhost"), port=6333)
+)
 dense = TextEmbedding("BAAI/bge-small-en-v1.5")
 sparse = SparseTextEmbedding("Qdrant/bm25")
 
@@ -38,8 +43,8 @@ def main(folder):
         for c in chunk(text)
     ]
     print(len(items), "chunks to embed", flush=True)
-    for i in range(0, len(items), 64):
-        batch = items[i:i + 64]
+    for i in range(0, len(items), 16):
+        batch = items[i:i + 16]
         texts = [t for _, _, t in batch]
         dv, sv = list(dense.embed(texts)), list(sparse.embed(texts))
         client.upsert(COLLECTION, [
@@ -50,7 +55,7 @@ def main(folder):
             )
             for (src, pg, t), d, s in zip(batch, dv, sv)
         ])
-        print(f"{min(i + 64, len(items))}/{len(items)}", flush=True)
+        print(f"{min(i + 16, len(items))}/{len(items)}", flush=True)
 
 
 if __name__ == "__main__":

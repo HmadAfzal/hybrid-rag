@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FastAPI Docs Q&amp;A</title>
+<style>
+  :root { --bg: #fff; --fg: #1a1a1a; --muted: #666; --card: #f4f4f5; --accent: #2563eb; --border: #ddd; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111; --fg: #eee; --muted: #999; --card: #1c1c1e; --accent: #60a5fa; --border: #333; }
+  }
+  body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+  h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+  .sub, .note, #status { color: var(--muted); font-size: 0.9rem; }
+  .row { display: flex; gap: 0.5rem; }
+  input { flex: 1; padding: 0.6rem; font-size: 1rem; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--fg); }
+  button { padding: 0.6rem 1rem; font-size: 1rem; border: 0; border-radius: 6px; background: var(--accent); color: #fff; cursor: pointer; }
+  button:disabled { opacity: 0.5; cursor: wait; }
+  .chip { color: var(--accent); text-decoration: none; font-size: 0.85rem; }
+  details { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.75rem; margin: 0.5rem 0; }
+  summary { cursor: pointer; }
+  pre { white-space: pre-wrap; word-break: break-word; font-size: 0.8rem; margin: 0.5rem 0 0; }
+</style>
+</head>
+<body>
+<h1>FastAPI docs Q&amp;A</h1>
+<p class="sub">Hybrid search, reranking, and every sentence checked against its source.</p>
+<div class="row">
+  <input id="q" maxlength="500" placeholder="How do I declare a query parameter?" autofocus>
+  <button id="go">Ask</button>
+</div>
+<p id="status"></p>
+<div id="answer"></div>
+<p id="note" class="note"></p>
+<h3 id="sh" hidden>Sources</h3>
+<div id="sources"></div>
+<script>
+const $ = (id) => document.getElementById(id);
+
+async function ask() {
+  const q = $("q").value.trim();
+  if (!q) return;
+  $("go").disabled = true;
+  $("status").textContent = "Thinking...";
+  $("answer").replaceChildren();
+  $("sources").replaceChildren();
+  $("note").textContent = "";
+  $("sh").hidden = true;
+  try {
+    const res = await fetch("/ask?q=" + encodeURIComponent(q));
+    if (!res.ok) {
+      throw new Error(
+        res.status === 429 ? "Too many requests, wait a minute." :
+        res.status === 400 ? "Question must be 1 to 500 characters." :
+        "Server error " + res.status
+      );
+    }
+    render(await res.json());
+    $("status").textContent = "";
+  } catch (e) {
+    $("status").textContent = e.message;
+  }
+  $("go").disabled = false;
+}
+
+function render(r) {
+  const good = r.claims.filter((c) => c.supported);
+  if (!good.length) $("answer").textContent = "I don't know.";
+  for (const c of good) {
+    const p = document.createElement("p");
+    p.append(c.text + " ");
+    for (const n of c.cites) {
+      const a = document.createElement("a");
+      a.href = "#src" + n;
+      a.textContent = "[" + n + "]";
+      a.className = "chip";
+      a.addEventListener("click", () => { $("src" + n).open = true; });
+      p.append(a, " ");
+    }
+    $("answer").append(p);
+  }
+  if (r.unsupported) $("note").textContent = r.unsupported + " unverified sentence(s) removed.";
+  $("sh").hidden = false;
+  for (const s of r.sources) {
+    const d = document.createElement("details");
+    d.id = "src" + s.id;
+    const sum = document.createElement("summary");
+    sum.textContent = "[" + s.id + "] " + s.source;
+    const pre = document.createElement("pre");
+    pre.textContent = s.text;
+    d.append(sum, pre);
+    $("sources").append(d);
+  }
+}
+
+$("go").addEventListener("click", ask);
+$("q").addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
+</script>
+</body>
+</html>

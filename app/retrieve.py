@@ -1,10 +1,15 @@
 import os
+import sys
 from fastembed import TextEmbedding, SparseTextEmbedding
 from fastembed.rerank.cross_encoder import TextCrossEncoder
 from qdrant_client import QdrantClient, models
 
 COLLECTION = "docs"
-client = QdrantClient(os.getenv("QDRANT_HOST", "localhost"), port=6333)
+client = (
+    QdrantClient(url=os.environ["QDRANT_URL"], api_key=os.getenv("QDRANT_API_KEY"))
+    if os.getenv("QDRANT_URL")
+    else QdrantClient(os.getenv("QDRANT_HOST", "localhost"), port=6333)
+)
 dense = TextEmbedding("BAAI/bge-small-en-v1.5")
 sparse = SparseTextEmbedding("Qdrant/bm25")
 reranker = TextCrossEncoder("Xenova/ms-marco-MiniLM-L-6-v2")
