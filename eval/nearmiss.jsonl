@@ -1,0 +1,8 @@
+{"q": "How do I add rate limiting to my FastAPI endpoints?"}
+{"q": "How do I cache responses with Redis in FastAPI?"}
+{"q": "How do I run database migrations with Alembic?"}
+{"q": "How do I deploy FastAPI to AWS Lambda?"}
+{"q": "How do I expose Prometheus metrics from FastAPI?"}
+{"q": "How do I take Stripe payments in FastAPI?"}
+{"q": "How do I consume Kafka messages in FastAPI?"}
+{"q": "How do I send Sentry error reports from FastAPI?"}

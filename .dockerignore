@@ -1,0 +1,6 @@
+.venv
+corpus_src
+qdrant_data
+models
+.env
+.git

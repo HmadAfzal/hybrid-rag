@@ -1,0 +1,41 @@
+{"q": "How do I declare a query parameter with a default value?", "sources": ["query-params.md"]}
+{"q": "How do I add min length validation to a query parameter?", "sources": ["query-params-str-validations.md"]}
+{"q": "How do I read a path parameter as an int?", "sources": ["path-params.md"]}
+{"q": "How do I declare a request body with Pydantic?", "sources": ["body.md"]}
+{"q": "How can I restrict returned fields with a response model?", "sources": ["response-model.md"]}
+{"q": "How do I enable CORS?", "sources": ["cors.md"]}
+{"q": "How do I run a task after returning a response?", "sources": ["background-tasks.md"]}
+{"q": "How do I raise an HTTP error with a custom status code?", "sources": ["handling-errors.md"]}
+{"q": "How do I upload a file?", "sources": ["request-files.md"]}
+{"q": "How do I read form fields?", "sources": ["request-forms.md"]}
+{"q": "How do I read a cookie?", "sources": ["cookie-params.md"]}
+{"q": "How do I read request headers?", "sources": ["header-params.md"]}
+{"q": "How do I set the response status code?", "sources": ["response-status-code.md"]}
+{"q": "How do I test my app?", "sources": ["testing.md"]}
+{"q": "How do I split an app into multiple files with routers?", "sources": ["bigger-applications.md"]}
+{"q": "How do I return an HTML response?", "sources": ["custom-response.md"]}
+{"q": "How do I use WebSockets?", "sources": ["websockets.md"]}
+{"q": "How do I run code at startup and shutdown?", "sources": ["events.md"]}
+{"q": "How do I connect to a SQL database?", "sources": ["sql-databases.md"]}
+{"q": "How do I build a Docker image for FastAPI?", "sources": ["docker.md"]}
+{"q": "How do I add JWT authentication?", "sources": ["oauth2-jwt.md"]}
+{"q": "How do I add a middleware?", "sources": ["middleware.md"]}
+{"q": "How do I add metadata and tags to the docs?", "sources": ["metadata.md"]}
+{"q": "How do I nest Pydantic models?", "sources": ["body-nested-models.md"]}
+{"q": "How do I update part of an item with PATCH?", "sources": ["body-updates.md"]}
+{"q": "How do I use environment variables?", "sources": ["environment-variables.md"]}
+{"q": "When should I use async def?", "sources": ["async.md"]}
+{"q": "How do I debug my app?", "sources": ["debugging.md"]}
+{"q": "How do I serve my app with HTTPS?", "sources": ["https.md"]}
+{"q": "What does response_model_exclude_unset do?", "sources": ["response-model.md"]}
+{"q": "What does jsonable_encoder do?", "sources": ["encoder.md"]}
+{"q": "What is OAuth2PasswordRequestForm?", "sources": ["simple-oauth2.md"]}
+{"q": "How do I clean up resources after a dependency finishes with yield?", "sources": ["dependencies-with-yield.md"]}
+{"q": "Make my endpoint reply right away and keep working afterwards", "sources": ["background-tasks.md"]}
+{"q": "Let a frontend on a different domain call my API", "sources": ["cors.md"]}
+{"q": "Accept a field in input but never send it back to the client", "sources": ["response-model.md", "extra-models.md"]}
+{"q": "Make sure a number is between 1 and 100", "sources": ["path-params-numeric-validations.md", "query-params-str-validations.md"]}
+{"q": "Send a file back to the client", "sources": ["custom-response.md"]}
+{"q": "Package my app so it runs the same on any server", "sources": ["docker.md"]}
+{"q": "What is Depends used for?", "sources": ["dependencies.md"]}
+{"q": "Why is my validation error a 422?", "sources": ["handling-errors.md", "body.md"]}

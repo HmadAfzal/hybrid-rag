@@ -1,0 +1,993 @@
+JUDGE: False CITES: [2] 
+CLAIM: You can create an environment variable for a command by prefixing the command with VAR_NAME=value when you run it. 
+SOURCE: # Settings and Environment Variables { #settings-and-environment-variables }
+
+In many cases your application could need some external settings or configurations, for example secret keys, database credentials, credentials for email services, etc.
+
+Most of these settings are variable (can change), like database URLs. And many could be sensitive, like secrets.
+
+For this reason it's common to provide them in environment variables that are read by the application.
+
+An **environment variable** (also known as an **env var**) is a value that lives outside of the Python code, in the operating system, and can be read by your application and other programs.
+
+You can create an environment variable for a command when you run it. You will see the platform-specific commands below.
+
+/// tip
+
+Read the [Environment Variables guide](https://tiangolo.com/guides/environment-variables/) for a detailed explanation of how environment variables work.
+
+///
+
+## Types and validation { #types-and-validation }
+
+These environment variables can only handle text strings, as they are external to Python and have to be compatible with other programs and the rest of the system (and even with different operating systems, such as Linux, Windows, and macOS).
+
+That means that any value read in Python from an environment variable will be a `str`, and any conversion to a different type or any validation has to be done in code.
+
+## Pydantic `Settings` { #pydantic-settings }
+
+Fortunately, Pydantic provides a great utility to handle these settings coming from environment variables with [Pydantic: Settings management](https://pydantic.dev/docs/validation/latest/concepts/pydantic_settings/).
+
+### Install `pydantic-settings` { #install-pydantic-settings }
+
+Add the `pydantic-settings` package to your project:
+
+<div cla 
+============================================================
+JUDGE: False CITES: [2] 
+CLAIM: In FastAPI you can read environment variables directly with os.getenv or more conveniently using Pydantic Settings, which loads them as strings and can convert types in code. 
+SOURCE: # Settings and Environment Variables { #settings-and-environment-variables }
+
+In many cases your application could need some external settings or configurations, for example secret keys, database credentials, credentials for email services, etc.
+
+Most of these settings are variable (can change), like database URLs. And many could be sensitive, like secrets.
+
+For this reason it's common to provide them in environment variables that are read by the application.
+
+An **environment variable** (also known as an **env var**) is a value that lives outside of the Python code, in the operating system, and can be read by your application and other programs.
+
+You can create an environment variable for a command when you run it. You will see the platform-specific commands below.
+
+/// tip
+
+Read the [Environment Variables guide](https://tiangolo.com/guides/environment-variables/) for a detailed explanation of how environment variables work.
+
+///
+
+## Types and validation { #types-and-validation }
+
+These environment variables can only handle text strings, as they are external to Python and have to be compatible with other programs and the rest of the system (and even with different operating systems, such as Linux, Windows, and macOS).
+
+That means that any value read in Python from an environment variable will be a `str`, and any conversion to a different type or any validation has to be done in code.
+
+## Pydantic `Settings` { #pydantic-settings }
+
+Fortunately, Pydantic provides a great utility to handle these settings coming from environment variables with [Pydantic: Settings management](https://pydantic.dev/docs/validation/latest/concepts/pydantic_settings/).
+
+### Install `pydantic-settings` { #install-pydantic-settings }
+
+Add the `pydantic-settings` package to your project:
+
+<div cla 
+============================================================
+JUDGE: False CITES: [3] 
+CLAIM: When using a TLS termination proxy you can configure FastAPI CLI with --forwarded-allow-ips to trust X-Forwarded-* headers so the app generates correct URLs and redirects 
+SOURCE: Termination Proxy also takes care of the certificate renewal process.
+    * Otherwise, you might have to stop the TLS Termination Proxy momentarily, start the renewal program to acquire the certificates, then configure them with the TLS Termination Proxy, and then restart the TLS Termination Proxy. This is not ideal, as your app(s) will not be available during the time that the TLS Termination Proxy is off.
+
+All this renewal process, while still serving the app, is one of the main reasons why you would want to have a **separate system to handle HTTPS** with a TLS Termination Proxy instead of just using the TLS certificates with the application server directly (e.g. Uvicorn).
+
+## Proxy Forwarded Headers { #proxy-forwarded-headers }
+
+When using a proxy to handle HTTPS, your **application server** (for example Uvicorn via FastAPI CLI) doesn't know anything about the HTTPS process, it communicates with plain HTTP with the **TLS Termination Proxy**.
+
+This **proxy** would normally set some HTTP headers on the fly before transmitting the request to the **application server**, to let the application server know that the request is being **forwarded** by the proxy.
+
+/// note | Technical Details
+
+The proxy headers are:
+
+* [X-Forwarded-For](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-For)
+* [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Proto)
+* [X-Forwarded-Host](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Host)
+
+///
+
+Nevertheless, as the **application server** doesn't know it is behind a trusted **proxy**, by default, it wouldn't trust those headers.
+
+But you can configure the **application server** to trust the *forwarded* headers sent by the **proxy**. I 
+============================================================
+JUDGE: False CITES: [1, 4] 
+CLAIM: You need to install the `python-multipart` package so FastAPI can parse `application/x-www-form-urlencoded` and `multipart/form-data` form data 
+SOURCE: 002_an_py310.py hl[9] *}
+
+A checked checkbox sends its value, which defaults to `"on"`. **FastAPI** accepts `"on"` as `True`.
+
+## About "Form Fields" { #about-form-fields }
+
+The way HTML forms (`<form></form>`) send the data to the server normally uses a "special" encoding for that data, it's different from JSON.
+
+**FastAPI** will make sure to read that data from the right place instead of JSON.
+
+/// note | Technical Details
+
+Data from forms is normally encoded using the "media type" `application/x-www-form-urlencoded`.
+
+But when the form includes files, it is encoded as `multipart/form-data`. You'll read about handling files in the next chapter.
+
+You can use `Form(media_type="multipart/form-data")` to describe a multipart form in OpenAPI. Setting it on one parameter is enough when combining form parameters or models.
+
+If you want to read more about these encodings and form fields, head to the [<abbr title="Mozilla Developer Network">MDN</abbr> web docs for `POST`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST).
+
+///
+
+/// warning
+
+You can declare multiple `Form` parameters in a *path operation*, but you can't also declare `Body` fields that you expect to receive as JSON, as the request will have the body encoded using `application/x-www-form-urlencoded` instead of `application/json`.
+
+This is not a limitation of **FastAPI**, it's part of the HTTP protocol.
+
+///
+
+## Recap { #recap }
+
+Use `Form` to declare form data input parameters.
+
+# Form Data { #form-data }
+
+When you need to receive form fields instead of JSON, you can use `Form`.
+
+/// note
+
+To use forms, first install [`python-multipart`](https://github.com/Kludex/python-multipart).
+
+Add it to your project:
+
+```console
+$ uv add python-multipart
+```
+
+///
+
+## Import `Form` { #import-form }
+
+Import `Form` from `fastapi`:
+
+{* ../../docs_src/request_forms/tutorial001_an_py310.py hl[3] *}
+
+## Define `Form` parameters { #define-form-parameters }
+
+Create form parameters the same way you would for `Body` or `Query`:
+
+{* ../../docs_src/request_forms/tutorial001_an_py310.py hl[9] *}
+
+For example, in one of the ways the OAuth2 specification can be used (called "password flow") it is required to send a `username` and `password` as form fields.
+
+The <dfn title="specification">spec</dfn> requires the fields to be exactly named `username` and `password`, and to be sent as form fields, not JSON.
+
+With `Form` you can declare the same configurations as with `Body` (and `Query`, `Path`, `Cookie`), including validation, examples, an alias (e.g. `user-name` instead of `username`), etc.
+
+/// note
+
+`Form` is a class that inherits directly from `Body`.
+
+///
+
+/// tip
+
+To declare form bodies, you need to use `Form` explicitly, because without it the parameters would be interpreted as query parameters or body (JSON) parameters.
+
+///
+
+## Boolean Form Fields { #boolean-form-fields }
+
+Browsers omit unchecked checkboxes when submitting HTML forms. Declare a boolean form parameter with a default of `False` to receive `False` when unchecked:
+
+{* ../../docs_src/request_forms/tutorial002_an_py310.py hl[9] *}
+
+A checked checkbox sends its value, which defaults to `"on"`. **FastAPI** accepts `"on"` as `True`.
+
+## About "Form Fields" { #about-form-fields }
+
+The way HTML forms (`<form 
+============================================================
+JUDGE: False CITES: [1] 
+CLAIM: Depends is used in FastAPI to declare a dependency that will be called and its return value injected into a path operation function 
+SOURCE: # Dependencies - `Depends()` and `Security()`
+
+## `Depends()`
+
+Dependencies are handled mainly with the special function `Depends()` that takes a callable.
+
+Here is the reference for it and its parameters.
+
+You can import it directly from `fastapi`:
+
+```python
+from fastapi import Depends
+```
+
+::: fastapi.Depends
+
+## `Security()`
+
+For many scenarios, you can handle security (authorization, authentication, etc.) with dependencies, using `Depends()`.
+
+But when you want to also declare OAuth2 scopes, you can use `Security()` instead of `Depends()`.
+
+You can import `Security()` directly from `fastapi`:
+
+```python
+from fastapi import Security
+```
+
+::: fastapi.Security
+ 
+============================================================
+JUDGE: False CITES: [1, 3] 
+CLAIM: Declare a parameter of type UploadFile (or bytes) with a default of File() so FastAPI reads the file from multipart/form-data 
+SOURCE: # Request Files { #request-files }
+
+You can define files to be uploaded by the client using `File`.
+
+/// note
+
+To receive uploaded files, first install [`python-multipart`](https://github.com/Kludex/python-multipart).
+
+Add it to your project:
+
+```console
+$ uv add python-multipart
+```
+
+This is because uploaded files are sent as "form data".
+
+///
+
+## Import `File` { #import-file }
+
+Import `File` and `UploadFile` from `fastapi`:
+
+{* ../../docs_src/request_files/tutorial001_an_py310.py hl[3] *}
+
+## Define `File` Parameters { #define-file-parameters }
+
+Create file parameters the same way you would for `Body` or `Form`:
+
+{* ../../docs_src/request_files/tutorial001_an_py310.py hl[9] *}
+
+/// note
+
+`File` is a class that inherits directly from `Form`.
+
+But remember that when you import `Query`, `Path`, `File` and others from `fastapi`, those are actually functions that return special classes.
+
+///
+
+/// tip
+
+To declare File bodies, you need to use `File`, because otherwise the parameters would be interpreted as query parameters or body (JSON) parameters.
+
+///
+
+The files will be uploaded as "form data".
+
+If you declare the type of your *path operation function* parameter as `bytes`, **FastAPI** will read the file for you and you will receive the contents as `bytes`.
+
+Keep in mind that this means that the whole contents will be stored in memory. This will work well for small files.
+
+But there are several cases in which you might benefit from using `UploadFile`.
+
+## File Parameters with `UploadFile` { #file-parameters-with-uploadfile }
+
+Define a file parameter with a type of `UploadFile`:
+
+{* ../../docs_src/request_files/tutorial001_an_py310.py hl[14] *}
+
+Using `UploadFile` has several advantages over `bytes`:
+
+* You don't have to use `File()` in the default value of the parameter.
+
+`:
+
+{* ../../docs_src/request_files/tutorial001_an_py310.py hl[14] *}
+
+Using `UploadFile` has several advantages over `bytes`:
+
+* You don't have to use `File()` in the default value of the parameter.
+* It uses a "spooled" file:
+    * A file stored in memory up to a maximum size limit, and after passing this limit it will be stored on disk.
+* This means that it will work well for large files like images, videos, large binaries, etc. without consuming all the memory.
+* You can get metadata from the uploaded file.
+* It has a [file-like](https://docs.python.org/3/glossary.html#term-file-like-object) `async` interface.
+* It exposes an actual Python [`SpooledTemporaryFile`](https://docs.python.org/3/library/tempfile.html#tempfile.SpooledTemporaryFile) object that you can pass directly to other libraries that expect a file-like object.
+
+### `UploadFile` { #uploadfile }
+
+`UploadFile` has the following attributes:
+
+* `filename`: A `str` with the original file name that was uploaded (e.g. `myimage.jpg`).
+* `content_type`: A `str` with the content type (MIME type / media type) (e.g. `image/jpeg`).
+* `file`: A [`SpooledTemporaryFile`](https://docs.python.org/3/library/tempfile.html#tempfile.SpooledTemporaryFile) (a [file-like](https://docs.python.org/3/glossary.html#term-file-like-object) object). This is the actual Python file object that you can pass directly to other functions or libraries that expect a "file-like" object.
+
+`UploadFile` has the following `async` methods. They all call the corresponding file methods underneath (using the internal `SpooledTemporaryFile`).
+
+* `write(data)`: Writes `data` (`str` or `bytes`) to the file.
+* `read(size)`: Reads `size` (`int`) bytes/characters of the file.
+* `seek(offset)`: Goes to the byte position `offset` (`int`) in the file.
+    * E 
+============================================================
+JUDGE: False CITES: [1, 5] 
+CLAIM: FastAPI returns a 422 Unprocessable Entity status for validation errors because it raises a RequestValidationError that is handled by a default exception handler which responds with a 422 response 
+SOURCE: ers }
+
+The same way, you can declare optional query parameters, by setting their default to `None`:
+
+{* ../../docs_src/query_params/tutorial002_py310.py hl[7] *}
+
+In this case, the function parameter `q` will be optional, and will be `None` by default.
+
+/// tip
+
+Also notice that **FastAPI** is smart enough to notice that the path parameter `item_id` is a path parameter and `q` is not, so, it's a query parameter.
+
+///
+
+## Query parameter type conversion { #query-parameter-type-conversion }
+
+You can also declare `bool` types, and they will be converted:
+
+{* ../../docs_src/query_params/tutorial003_py310.py hl[7] *}
+
+In this case, if you go to:
+
+```
+http://127.0.0.1:8000/items/foo?short=1
+```
+
+or
+
+```
+http://127.0.0.1:8000/items/foo?short=True
+```
+
+or
+
+```
+http://127.0.0.1:8000/items/foo?short=true
+```
+
+or
+
+```
+http://127.0.0.1:8000/items/foo?short=on
+```
+
+or
+
+```
+http://127.0.0.1:8000/items/foo?short=yes
+```
+
+or any other case variation (uppercase, first letter in uppercase, etc), your function will see the parameter `short` with a `bool` value of `True`.
+
+Values such as `0`, `false`, `off`, and `no` (including case variations) are converted to `False`.
+
+If `short` is omitted, **FastAPI** uses its default value, which is `False` in this example.
+
+An empty value (`?short=`) or an unrecognized value (for example, `?short=maybe`) produces a `422` validation error.
+
+
+## Multiple path and query parameters { #multiple-path-and-query-parameters }
+
+You can declare multiple path parameters and query parameters at the same time, **FastAPI** knows which is which.
+
+And you don't have to declare them in any specific order.
+
+They will be detected by name:
+
+{* ../../docs_src/query_params/tutorial004_py310.py hl[6,8] *}
+
+## Required query parameters { #required-query-parameters }
+
+When yo
+HTTP error of:
+
+```JSON
+{
+  "detail": [
+    {
+      "type": "int_parsing",
+      "loc": [
+        "path",
+        "item_id"
+      ],
+      "msg": "Input should be a valid integer, unable to parse string as an integer",
+      "input": "foo"
+    }
+  ]
+}
+```
+
+because the path parameter `item_id` had a value of `"foo"`, which is not an `int`.
+
+The same error would appear if you provided a `float` instead of an `int`, as in: [http://127.0.0.1:8000/items/4.2](http://127.0.0.1:8000/items/4.2)
+
+/// tip
+
+So, with the same Python type declaration, **FastAPI** gives you data validation.
+
+Notice that the error also clearly states exactly the point where the validation didn't pass.
+
+This is incredibly helpful while developing and debugging code that interacts with your API.
+
+///
+
+## Documentation { #documentation }
+
+And when you open your browser at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs), you will see an automatic, interactive, API documentation like:
+
+<img src="/img/tutorial/path-params/image01.png">
+
+/// tip
+
+Again, just with that same Python type declaration, **FastAPI** gives you automatic, interactive documentation (integrating Swagger UI).
+
+Notice that the path parameter is declared to be an integer.
+
+///
+
+## Standards-based benefits, alternative documentation { #standards-based-benefits-alternative-documentation }
+
+And because the generated schema is from the [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md) standard, there are many compatible tools.
+
+Because of this, **FastAPI** itself provides an alternative API documentation (using ReDoc), which you can access at [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc):
+
+<img src="/img/tutorial/path-params/image02.png">
+
+The same way, there are many compatible tools. In 
+============================================================
+JUDGE: True CITES: [4] 
+CLAIM: If a path operation function only runs blocking code, keep it as a normal def so FastAPI runs it in a threadpool, otherwise async def is preferred for better performance 
+SOURCE: and `await`** syntax.
+
+That should make more sense now. ✨
+
+All that is what powers FastAPI (through Starlette) and what makes it have such an impressive performance.
+
+## Very Technical Details { #very-technical-details }
+
+/// warning
+
+You can probably skip this.
+
+These are very technical details of how **FastAPI** works underneath.
+
+If you have quite some technical knowledge (coroutines, threads, blocking, etc.) and are curious about how FastAPI handles `async def` vs normal `def`, go ahead.
+
+///
+
+### Path operation functions { #path-operation-functions }
+
+When you declare a *path operation function* with normal `def` instead of `async def`, it is run in an external threadpool that is then awaited, instead of being called directly (as it would block the server).
+
+If you are coming from another async framework that does not work in the way described above and you are used to defining trivial compute-only *path operation functions* with plain `def` for a tiny performance gain (about 100 nanoseconds), please note that in **FastAPI** the effect would be quite opposite. In these cases, it's better to use `async def` unless your *path operation functions* use code that performs blocking <abbr title="Input/Output: disk reading or writing, network communications.">I/O</abbr>.
+
+Still, in both situations, chances are that **FastAPI** will [still be faster](index.md#performance) than (or at least comparable to) your previous framework.
+
+### Dependencies { #dependencies }
+
+The same applies for [dependencies](tutorial/dependencies/index.md). If a dependency is a standard `def` function instead of `async def`, it is run in the external threadpool.
+
+### Sub-dependencies { #sub-dependencies }
+
+You can have multiple dependencies and [sub-dependencies](tutorial/dependencies/sub-dependenc 
+============================================================
+JUDGE: True CITES: [2] 
+CLAIM: Dependencies can be defined with async def or def, and you should use async def when the dependency itself needs to await other async calls, as FastAPI will manage them appropriately 
+SOURCE: ot specific to **FastAPI**.
+
+But because **FastAPI** is based on the Python standards, including `Annotated`, you can use this trick in your code. 😎
+
+///
+
+The dependencies will keep working as expected, and the **best part** is that the **type information will be preserved**, which means that your editor will be able to keep providing you with **autocompletion**, **inline errors**, etc. The same for other tools like `mypy`.
+
+This will be especially useful when you use it in a **large code base** where you use **the same dependencies** over and over again in **many *path operations***.
+
+## To `async` or not to `async` { #to-async-or-not-to-async }
+
+As dependencies will also be called by **FastAPI** (the same as your *path operation functions*), the same rules apply while defining your functions.
+
+You can use `async def` or normal `def`.
+
+And you can declare dependencies with `async def` inside of normal `def` *path operation functions*, or `def` dependencies inside of `async def` *path operation functions*, etc.
+
+It doesn't matter. **FastAPI** will know what to do.
+
+/// note
+
+If you don't know, check the [Async: *"In a hurry?"*](../../async.md#in-a-hurry) section about `async` and `await` in the docs.
+
+///
+
+## Integrated with OpenAPI { #integrated-with-openapi }
+
+All the request declarations, validations and requirements of your dependencies (and sub-dependencies) will be integrated in the same OpenAPI schema.
+
+So, the interactive docs will have all the information from these dependencies too:
+
+<img src="/img/tutorial/dependencies/image01.png">
+
+## Simple usage { #simple-usage }
+
+If you look at it, *path operation functions* are declared to be used whenever a *path* and *operation* matches, and then **FastAPI** takes care of calling the function with the correct paramete 
+============================================================
+JUDGE: True CITES: [2, 4] 
+CLAIM: Nested models can also be placed inside standard collection types such as list[Image] or set[Image] to validate lists or sets of sub‑models 
+SOURCE: # Body - Nested Models { #body-nested-models }
+
+With **FastAPI**, you can define, validate, document, and use arbitrarily deeply nested models (thanks to Pydantic).
+
+## List fields { #list-fields }
+
+You can define an attribute to be a subtype. For example, a Python `list`:
+
+{* ../../docs_src/body_nested_models/tutorial001_py310.py hl[12] *}
+
+This will make `tags` be a list, although it doesn't declare the type of the elements of the list.
+
+## List fields with type parameter { #list-fields-with-type-parameter }
+
+But Python has a specific way to declare lists with internal types, or "type parameters":
+
+### Declare a `list` with a type parameter { #declare-a-list-with-a-type-parameter }
+
+To declare types that have type parameters (internal types), like `list`, `dict`, `tuple`,
+pass the internal type(s) as "type parameters" using square brackets: `[` and `]`
+
+```Python
+my_list: list[str]
+```
+
+That's all standard Python syntax for type declarations.
+
+Use that same standard syntax for model attributes with internal types.
+
+So, in our example, we can make `tags` be specifically a "list of strings":
+
+{* ../../docs_src/body_nested_models/tutorial002_py310.py hl[12] *}
+
+## Set types { #set-types }
+
+But then we think about it, and realize that tags shouldn't repeat, they would probably be unique strings.
+
+And Python has a special data type for sets of unique items, the `set`.
+
+Then we can declare `tags` as a set of strings:
+
+{* ../../docs_src/body_nested_models/tutorial003_py310.py hl[12] *}
+
+With this, even if you receive a request with duplicate data, it will be converted to a set of unique items.
+
+And whenever you output that data, even if the source had duplicates, it will be output as a set of unique items.
+
+And it will be annotated / documented accordingly too.
+
+## Nested Mo
+lidation/latest/concepts/types/). You will see some examples in the next chapter.
+
+For example, as in the `Image` model we have a `url` field, we can declare it to be an instance of Pydantic's `HttpUrl` instead of a `str`:
+
+{* ../../docs_src/body_nested_models/tutorial005_py310.py hl[2,8] *}
+
+The string will be checked to be a valid URL, and documented in JSON Schema / OpenAPI as such.
+
+## Attributes with lists of submodels { #attributes-with-lists-of-submodels }
+
+You can also use Pydantic models as subtypes of `list`, `set`, etc.:
+
+{* ../../docs_src/body_nested_models/tutorial006_py310.py hl[18] *}
+
+This will expect (convert, validate, document, etc.) a JSON body like:
+
+```JSON hl_lines="11"
+{
+    "name": "Foo",
+    "description": "The pretender",
+    "price": 42.0,
+    "tax": 3.2,
+    "tags": [
+        "rock",
+        "metal",
+        "bar"
+    ],
+    "images": [
+        {
+            "url": "http://example.com/baz.jpg",
+            "name": "The Foo live"
+        },
+        {
+            "url": "http://example.com/dave.jpg",
+            "name": "The Baz"
+        }
+    ]
+}
+```
+
+/// note
+
+Notice how the `images` key now has a list of image objects.
+
+///
+
+## Deeply nested models { #deeply-nested-models }
+
+You can define arbitrarily deeply nested models:
+
+{* ../../docs_src/body_nested_models/tutorial007_py310.py hl[7,12,18,21,25] *}
+
+/// note
+
+Notice how `Offer` has a list of `Item`s, which in turn have an optional list of `Image`s
+
+///
+
+## Bodies of pure lists { #bodies-of-pure-lists }
+
+If the top level value of the JSON body you expect is a JSON `array` (a Python `list`), you can declare the type in the parameter of the function, the same as in Pydantic models:
+
+```Python
+images: list[Image]
+```
+
+as in:
+
+{* ../../docs_src/body_nested_models/tutorial008_py310.py hl[13] * 
+============================================================
+JUDGE: True CITES: [2] 
+CLAIM: Run the built image with docker run -d --name mycontainer -p 80:80 myimage 
+SOURCE:  but using the **cache** would **take seconds** at most.
+
+And as you would be building the container image again and again during development to check that your code changes are working, there's a lot of accumulated time this would save.
+
+Then, near the end of the `Dockerfile`, we copy all the code. As this is what **changes most frequently**, we put it near the end, because almost always, anything after this step will not be able to use the cache.
+
+```Dockerfile
+COPY ./app /code/app
+```
+
+### Build the Docker Image { #build-the-docker-image }
+
+Now that all the files are in place, let's build the container image.
+
+* Go to the project directory (in where your `Dockerfile` is, containing your `app` directory).
+* Build your FastAPI image:
+
+<div class="termy">
+
+```console
+$ docker build -t myimage .
+
+---> 100%
+```
+
+</div>
+
+/// tip
+
+Notice the `.` at the end, it's equivalent to `./`, it tells Docker the directory to use to build the container image.
+
+In this case, it's the same current directory (`.`).
+
+///
+
+### Start the Docker Container { #start-the-docker-container }
+
+* Run a container based on your image:
+
+<div class="termy">
+
+```console
+$ docker run -d --name mycontainer -p 80:80 myimage
+```
+
+</div>
+
+## Check it { #check-it }
+
+You should be able to check it in your Docker container's URL, for example: [http://192.168.99.100/items/5?q=somequery](http://192.168.99.100/items/5?q=somequery) or [http://127.0.0.1/items/5?q=somequery](http://127.0.0.1/items/5?q=somequery) (or equivalent, using your Docker host).
+
+You will see something like:
+
+```JSON
+{"item_id": 5, "q": "somequery"}
+```
+
+## Interactive API docs { #interactive-api-docs }
+
+Now you can go to [http://192.168.99.100/docs](http://192.168.99.100/docs) or [http://127.0.0.1/docs](http://127.0.0.1/docs) (or equivalent, u 
+============================================================
+JUDGE: True CITES: [3, 4] 
+CLAIM: When a client disconnects, `await websocket.receive_text()` raises a `WebSocketDisconnect` exception that you can catch and handle 
+SOURCE: e raise a `WebSocketException`.
+
+You can use a closing code from the [valid codes defined in the specification](https://tools.ietf.org/html/rfc6455#section-7.4.1).
+
+///
+
+### Try the WebSockets with dependencies { #try-the-websockets-with-dependencies }
+
+Run your application:
+
+<div class="termy">
+
+```console
+$ uv run fastapi dev
+
+<span style="color: green;">INFO</span>:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+```
+
+</div>
+
+Open your browser at [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
+There you can set:
+
+* The "Item ID", used in the path.
+* The "Token" used as a query parameter.
+
+/// tip
+
+Notice that the query `token` will be handled by a dependency.
+
+///
+
+With that you can connect the WebSocket and then send and receive messages:
+
+<img src="/img/tutorial/websockets/image05.png">
+
+## Handling disconnections and multiple clients { #handling-disconnections-and-multiple-clients }
+
+When a WebSocket connection is closed, the `await websocket.receive_text()` will raise a `WebSocketDisconnect` exception, which you can then catch and handle like in this example.
+
+{* ../../docs_src/websockets_/tutorial003_py310.py hl[79:81] *}
+
+To try it out:
+
+* Open the app with several browser tabs.
+* Write messages from them.
+* Then close one of the tabs.
+
+That will raise the `WebSocketDisconnect` exception, and all the other clients will receive a message like:
+
+```
+Client #1596980209979 left the chat
+```
+
+/// tip
+
+The app above is a minimal and simple example to demonstrate how to handle and broadcast messages to several WebSocket connections.
+
+But keep in mind that, as everything is handled in memory, in a single list, it will only work while the process is running, and will only work with a single process.
+
+If you need something easy to integrate with Fast
+# WebSockets
+
+When defining WebSockets, you normally declare a parameter of type `WebSocket` and with it you can read data from the client and send data to it.
+
+Read more about it in the [FastAPI docs for WebSockets](https://fastapi.tiangolo.com/advanced/websockets/)
+
+It is provided directly by Starlette, but you can import it from `fastapi`:
+
+```python
+from fastapi import WebSocket
+```
+
+/// tip
+
+When you want to define dependencies that should be compatible with both HTTP and WebSockets, you can define a parameter that takes an `HTTPConnection` instead of a `Request` or a `WebSocket`.
+
+///
+
+::: fastapi.WebSocket
+    options:
+        members:
+            - scope
+            - app
+            - url
+            - base_url
+            - headers
+            - query_params
+            - path_params
+            - cookies
+            - client
+            - state
+            - url_for
+            - client_state
+            - application_state
+            - receive
+            - send
+            - accept
+            - receive_text
+            - receive_bytes
+            - receive_json
+            - iter_text
+            - iter_bytes
+            - iter_json
+            - send_text
+            - send_bytes
+            - send_json
+            - close
+
+## WebSockets - additional classes
+
+Additional classes for handling WebSockets.
+
+Provided directly by Starlette, but you can import them from `fastapi`:
+
+```python
+from fastapi.websockets import WebSocketDisconnect, WebSocketState
+```
+
+::: fastapi.websockets.WebSocketDisconnect
+
+When a client disconnects, a `WebSocketDisconnect` exception is raised, you can catch it.
+
+You can import it directly from `fastapi`:
+
+```python
+from fastapi import WebSocketDisconnect
+```
+
+Read more about it in the [FastAPI docs for WebSockets](https://fastap 
+============================================================
+JUDGE: True CITES: [1] 
+CLAIM: Code that should run before the application starts handling requests can be placed in a lifespan function before the yield statement 
+SOURCE: imple automated test, then that test would be **slow** because it would have to wait for the model to load before being able to run an independent part of the code.
+
+That's what we'll solve, let's load the model before the requests are handled, but only right before the application starts receiving requests, not while  the code is being loaded.
+
+## Lifespan { #lifespan }
+
+You can define this *startup* and *shutdown* logic using the `lifespan` parameter of the `FastAPI` app, and a "context manager" (I'll show you what that is in a second).
+
+Let's start with an example and then see it in detail.
+
+We create an async function `lifespan()` with `yield` like this:
+
+{* ../../docs_src/events/tutorial003_py310.py hl[16,19] *}
+
+Here we are simulating the expensive *startup* operation of loading the model by putting the (fake) model function in the dictionary with machine learning models before the `yield`. This code will be executed **before** the application **starts taking requests**, during the *startup*.
+
+And then, right after the `yield`, we unload the model. This code will be executed **after** the application **finishes handling requests**, right before the *shutdown*. This could, for example, release resources like memory or a GPU.
+
+/// tip
+
+The `shutdown` would happen when you are **stopping** the application.
+
+Maybe you need to start a new version, or you just got tired of running it. 🤷
+
+///
+
+### Lifespan function { #lifespan-function }
+
+The first thing to notice, is that we are defining an async function with `yield`. This is very similar to Dependencies with `yield`.
+
+{* ../../docs_src/events/tutorial003_py310.py hl[14:19] *}
+
+The first part of the function, before the `yield`, will be executed **before** the application starts.
+
+And the part after the `yield` will be 
+============================================================
+JUDGE: True CITES: [3] 
+CLAIM: For many settings you can place them in a .env file and have Pydantic (with python-dotenv) load them as if they were environment variables. 
+SOURCE: is used.
+
+## Reading a `.env` file { #reading-a-env-file }
+
+If you have many settings that possibly change a lot, maybe in different environments, it might be useful to put them on a file and then read them from it as if they were environment variables.
+
+This practice is common enough that it has a name, these environment variables are commonly placed in a file `.env`, and the file is called a "dotenv".
+
+/// tip
+
+A file starting with a dot (`.`) is a hidden file in Unix-like systems, like Linux and macOS.
+
+But a dotenv file doesn't really have to have that exact filename.
+
+///
+
+Pydantic has support for reading from these types of files using an external library. You can read more at [Pydantic Settings: Dotenv (.env) support](https://pydantic.dev/docs/validation/latest/concepts/pydantic_settings/#dotenv-env-support).
+
+/// tip
+
+For this to work, add `python-dotenv` to your project with `uv add python-dotenv`.
+
+///
+
+### The `.env` file { #the-env-file }
+
+You could have a `.env` file with:
+
+```bash
+ADMIN_EMAIL="deadpool@example.com"
+APP_NAME="ChimichangApp"
+```
+
+### Read settings from `.env` { #read-settings-from-env }
+
+And then update your `config.py` with:
+
+{* ../../docs_src/settings/app03_an_py310/config.py hl[9] *}
+
+/// tip
+
+The `model_config` attribute is used just for Pydantic configuration. You can read more at [Pydantic: Concepts: Configuration](https://pydantic.dev/docs/validation/latest/concepts/config/).
+
+///
+
+Here we define the config `env_file` inside of your Pydantic `Settings` class, and set the value to the filename with the dotenv file we want to use.
+
+### Creating the `Settings` only once with `lru_cache` { #creating-the-settings-only-once-with-lru-cache }
+
+Reading a file from disk is normally a costly (slow) operation, so you probably want to do it only o 
+============================================================
+JUDGE: True CITES: [2] 
+CLAIM: OAuth2PasswordRequestForm is a FastAPI dependency class that parses a form body with fields such as username, password, optional scope, grant_type, client_id and client_secret. 
+SOURCE: c permission required.
+
+It doesn't matter if it has other characters like `:` or if it is a URL.
+
+Those details are implementation specific.
+
+For OAuth2 they are just strings.
+
+///
+
+## Code to get the `username` and `password` { #code-to-get-the-username-and-password }
+
+Now let's use the utilities provided by **FastAPI** to handle this.
+
+### `OAuth2PasswordRequestForm` { #oauth2passwordrequestform }
+
+First, import `OAuth2PasswordRequestForm`, and use it as a dependency with `Depends` in the *path operation* for `/token`:
+
+{* ../../docs_src/security/tutorial003_an_py310.py hl[4,78] *}
+
+`OAuth2PasswordRequestForm` is a class dependency that declares a form body with:
+
+* The `username`.
+* The `password`.
+* An optional `scope` field as a big string, composed of strings separated by spaces.
+* An optional `grant_type`.
+
+/// tip
+
+The OAuth2 spec actually *requires* a field `grant_type` with a fixed value of `password`, but `OAuth2PasswordRequestForm` doesn't enforce it.
+
+If you need to enforce it, use `OAuth2PasswordRequestFormStrict` instead of `OAuth2PasswordRequestForm`.
+
+///
+
+* An optional `client_id` (we don't need it for our example).
+* An optional `client_secret` (we don't need it for our example).
+
+/// note
+
+The `OAuth2PasswordRequestForm` is not a special class for **FastAPI** as is `OAuth2PasswordBearer`.
+
+`OAuth2PasswordBearer` makes **FastAPI** know that it is a security scheme. So it is added that way to OpenAPI.
+
+But `OAuth2PasswordRequestForm` is just a class dependency that you could have written yourself, or you could have declared `Form` parameters directly.
+
+But as it's a common use case, it is provided by **FastAPI** directly, just to make it easier.
+
+///
+
+### Use the form data { #use-the-form-data }
+
+/// tip
+
+The instance of the dependency class `OAuth2Pas 
+============================================================
