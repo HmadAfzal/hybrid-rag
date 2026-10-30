@@ -1,13 +1,7 @@
-# Hybrid RAG with verified citations
+# Hybrid RAG
 
 RAG over the FastAPI docs. Dense + BM25 retrieval fused with RRF, cross-encoder reranking, and claim-level citation verification. Every sentence in the final answer was checked by an LLM judge against the source chunk it cites. Unsupported sentences are dropped.
 
-## How it works
-
-1. **Ingest:** markdown/PDF split into ~1800 char windows with 200 overlap, embedded with `bge-small-en-v1.5` (dense) and Qdrant BM25 (sparse), stored in Qdrant.
-2. **Retrieve:** dense and BM25 each return 30, fused with RRF, top 20 reranked by `ms-marco-MiniLM-L-6-v2`, top 5 returned.
-3. **Answer:** the LLM (gpt-oss on Groq) returns JSON claims, each with source numbers.
-4. **Verify:** a second LLM call checks each claim against its cited chunks. Unsupported, uncited, or invalid claims are dropped. Verification fails closed. If nothing survives, the answer is "I don't know."
 
 ## Evals
 
