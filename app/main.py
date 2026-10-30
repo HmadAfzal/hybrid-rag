@@ -13,17 +13,21 @@ LIMIT, WINDOW = 10, 60
 seen = defaultdict(deque)
 
 
-def check(request: Request, q: str):
+def guard(ip: str, q: str):
     if not q.strip() or len(q) > MAX_Q:
         raise HTTPException(400, f"q must be 1-{MAX_Q} characters")
     now = time.time()
-    ip = request.headers.get("x-forwarded-for", request.client.host).split(",")[0].strip()
     dq = seen[ip]
     while dq and now - dq[0] > WINDOW:
         dq.popleft()
     if len(dq) >= LIMIT:
         raise HTTPException(429, "rate limit exceeded")
     dq.append(now)
+
+
+def check(request: Request, q: str):
+    ip = request.headers.get("x-forwarded-for", request.client.host).split(",")[0].strip()
+    guard(ip, q)
 
 
 @app.get("/", include_in_schema=False)
